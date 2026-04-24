@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -9,172 +8,258 @@ html
     <style>
         /* ===== 基礎設定 ===== */
         *{margin:0;padding:0;box-sizing:border-box;}
-        body,html{font-family:'Montserrat','Noto Sans TC',sans-serif; background:#fff; color:#1a1a1a; scroll-behavior:smooth; overflow-x:hidden;}
+        body,html{font-family:'Montserrat','Noto Sans TC',sans-serif; background-color:#ffffff; color:#1a1a1a; scroll-behavior:smooth; overflow-x:hidden;}
         a{text-decoration:none; color:inherit;}
 
-        /* ===== 1. 進場與時光隧道 (Warp) ===== */
+        /* ===== 背景裝飾：垂直線與明顯幾何塊 ===== */
+        .bg-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+        
+        /* 垂直長線 */
+        .v-lines { position: absolute; width: 100%; height: 100%; display: flex; justify-content: space-around; padding: 0 5%; }
+        .v-line { width: 1px; height: 100%; background: #f0f0f0; }
+
+        /* 幾何色塊 (正方形與梯形 - 調深灰色確保看得到) */
+        .shape { position: absolute; background: #f2f2f2; border: 1px solid #e5e5e5; opacity: 0.9; }
+        .shape-sq-1 { width: 350px; height: 350px; top: 5%; right: -80px; transform: rotate(15deg); }
+        .shape-sq-2 { width: 180px; height: 180px; bottom: 20%; left: 3%; background: #eeeeee; transform: rotate(-10deg); }
+        .shape-trap-1 { 
+            width: 550px; height: 320px; top: 30%; left: -150px; 
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            background: #f7f7f7; transform: rotate(-6deg);
+        }
+
+        /* ===== 標題特殊造型 (雙橫線 + 斜切線) ===== */
+        .section-header {
+            position: relative; width: 100%; padding: 70px 0; margin-bottom: 60px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .section-header::before {
+            content: ""; position: absolute; top: 44%; left: -10%; width: 120%; height: 1px;
+            background: #e5e5e5; z-index: 1;
+        }
+        .header-line-main {
+            position: absolute; top: 58%; left: -10%; width: 120%; height: 1.5px;
+            background: #333; z-index: 1;
+        }
+        .section-header h2 {
+            position: relative; background: #fff; padding: 0 45px;
+            font-size: 26px; letter-spacing: 18px; font-weight: 800; text-transform: uppercase; z-index: 2;
+        }
+        .header-line-slash {
+            position: absolute; top: 38%; left: 58%; width: 95px; height: 2px;
+            background: #000; transform: rotate(-38deg); z-index: 3;
+        }
+
+        /* ===== 1. 進場動畫與隧道 ===== */
         .enter-overlay {
             position:fixed; top:0; left:0; width:100%; height:100%;
-            z-index:9000; background:#000; display:flex; align-items:center; justify-content:center;
+            z-index:9999; background:#000; display:flex; align-items:center; justify-content:center;
             transition: 1.5s cubic-bezier(0.7, 0, 0.3, 1); overflow: hidden;
         }
         .enter-overlay video { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; height:100%; object-fit:cover; opacity: 0.5; z-index: 0; }
-        .warp-container { position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .warp-container { position: absolute; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
         .star { position: absolute; background: #fff; border-radius: 50%; opacity: 0; }
-        
-        .enter-content { position: relative; z-index: 10; text-align: center; color: #fff; pointer-events: auto; }
-        .enter-content h1 { 
-            font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 20px; font-weight: 800; color: #fff;
-            text-shadow: 0 0 20px #00d2ff; animation: flickerGlow 3.5s infinite alternate;
-        }
-        @keyframes flickerGlow {
-            0%, 100% { opacity: 1; text-shadow: 0 0 20px #fff, 0 0 40px #00d2ff, 0 0 80px #00d2ff; }
-            50% { opacity: 0.3; text-shadow: 0 0 5px #fff, 0 0 10px #00d2ff; }
-            60% { opacity: 1; }
-        }
-        
-        /* ENTER 按鈕樣式 */
-        .enter-btn { 
-            padding:15px 50px; background:rgba(0, 210, 255, 0.1); color:#fff; border:1px solid #00d2ff; 
-            cursor:pointer; letter-spacing: 5px; transition: 0.4s; position: relative; z-index: 20;
-            display: inline-block; margin-top: 20px;
-        }
-        .enter-btn:hover { background: #00d2ff; color: #000; box-shadow: 0 0 20px #00d2ff; }
-
-        /* 隧道啟動動畫樣式 */
-        .launching { transform: scale(5); opacity: 0; pointer-events: none; }
+        .enter-content { z-index: 10; text-align: center; color: #fff; }
+        .enter-content h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 20px; font-weight: 800; animation: flickerGlow 3s infinite alternate; }
+        @keyframes flickerGlow { 0%, 100% { opacity: 1; text-shadow: 0 0 20px #00d2ff; } 50% { opacity: 0.3; } }
+        .enter-btn { padding:15px 50px; background:transparent; color:#fff; border:1px solid #00d2ff; cursor:pointer; letter-spacing: 5px; margin-top: 30px; }
+        .launching { transform: scale(5); opacity: 0; pointer-events: none; visibility: hidden; }
         .star-animate { animation: warpMove 1s ease-in forwards; }
-        @keyframes warpMove { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(35) translate(var(--x), var(--y)); opacity: 0; } }
+        @keyframes warpMove { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(40) translate(var(--x), var(--y)); opacity: 0; } }
 
-        /* ===== 2. 主網站區塊排版 ===== */
+        /* ===== 2. 主網站佈局 ===== */
         .site-header{ position:fixed; top:0; left:0; width:100%; display:flex; justify-content:space-between; align-items:center; padding:30px 60px; z-index:1000; transition: 0.5s; }
-        .site-header.scrolled { padding: 15px 60px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
+        .site-header.scrolled { padding: 15px 60px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #eee; }
+        .nav-list { display:flex; gap:25px; font-size: 11px; letter-spacing: 1px; font-weight: 500; }
         
-        section { padding: 120px 10%; max-width: 1400px; margin: 0 auto; opacity: 0; transform: translateY(40px); transition: 1s ease; }
-        section.in-view { opacity: 1; transform: translateY(0); }
-        .section-title { font-size: 26px; letter-spacing: 12px; text-align: center; margin-bottom: 60px; text-transform: uppercase; }
+        section { padding: 100px 10%; max-width: 1400px; margin: 0 auto; background: transparent !important; }
 
-        /* SVG Icon 顏色與大小 */
+        /* 服務流程 SVG 與文字說明 */
         .flow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; text-align: center; }
-        .flow-svg { width: 50px; height: 50px; fill: #00d2ff; margin-bottom: 25px; }
+        .flow-item svg { width: 45px; height: 45px; fill: none; stroke: #333; stroke-width: 1.2; margin-bottom: 25px; }
+        .flow-item h4 { font-size: 18px; margin-bottom: 15px; letter-spacing: 2px; }
+        .flow-item p { font-size: 13px; opacity: 0.7; line-height: 1.8; font-weight: 300; }
 
-        /* 作品集格線 */
-        .port-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .port-item { height: 500px; background: #eee; overflow: hidden; position: relative; }
+        /* 作品集：左右穿插動畫 */
+        .port-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .port-item { 
+            height: 550px; background: #eee; overflow: hidden; position: relative; cursor: pointer;
+            opacity: 0; transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .port-item.left { transform: translateX(-120px); }
+        .port-item.right { transform: translateX(120px); }
+        .port-item.in-view { opacity: 1; transform: translateX(0); }
         .port-item img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s ease; }
         .port-item:hover img { transform: scale(1.1); }
+        .port-label { position: absolute; bottom: 30px; left: 30px; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
-        /* 音樂控制 CD 按鈕 */
-        #music-btn { position:fixed; bottom:40px; right:40px; width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #00d2ff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2000; box-shadow: 0 0 15px #00d2ff; }
+        /* 音樂 CD */
+        #music-btn { position:fixed; bottom:40px; right:40px; width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #00d2ff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2000; }
         .rotate { animation: spin 4s linear infinite; }
         @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
-        @media(max-width: 768px) { .site-header { padding: 20px; } .port-grid { grid-template-columns: 1fr; } }
+        /* 詳情彈窗 */
+        #project-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; overflow-y: auto; padding: 100px 10%; }
+        .modal-close { position: fixed; top: 40px; right: 40px; color: #fff; font-size: 40px; cursor: pointer; z-index: 10001; }
+        .detail-img { width: 100%; margin-bottom: 30px; display: block; }
+
+        @media(max-width: 768px) { .nav-list { display:none; } .port-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<!-- ★★★ 1. 背景音樂路徑 ★★★ -->
-<audio id="bg-music" loop>
-    <source src="assets/music/background.mp3" type="audio/mpeg">
-</audio>
+<!-- 背景系統：垂直線 + 灰色塊 -->
+<div class="bg-system">
+    <div class="v-lines">
+        <div class="v-line"></div><div class="v-line"></div><div class="v-line"></div>
+        <div class="v-line"></div><div class="v-line"></div><div class="v-line"></div>
+    </div>
+    <div class="shape shape-sq-1"></div>
+    <div class="shape shape-sq-2"></div>
+    <div class="shape shape-trap-1"></div>
+</div>
 
-<!-- ★★★ 2. 進場畫面 (發光閃爍字 + ENTER 按鈕) ★★★ -->
+<audio id="bg-music" loop preload="auto"><source src="assets/music/background.mp3" type="audio/mpeg"></audio>
+
+<!-- 1. 進場畫面 -->
 <div class="enter-overlay" id="overlay">
-    <!-- ★★★ 進場影片路徑 ★★★ -->
     <video autoplay muted loop playsinline><source src="assets/videos/intro.mp4" type="video/mp4"></video>
     <div class="warp-container" id="warp-container"></div>
     <div class="enter-content">
         <h1>CHD DESIGN</h1>
-        <p style="letter-spacing: 8px; margin-bottom: 30px; color: #00d2ff; opacity: 0.8;">FUTURE ARCHITECTURE</p>
+        <p style="letter-spacing: 8px; margin-bottom: 30px; color: #00d2ff;">AUTHENTIC ARCHITECTURE</p>
         <button class="enter-btn" onclick="startWarp()">ENTER SYSTEM</button>
     </div>
 </div>
 
-<!-- ★★★ 3. 音樂 CD 按鈕 ★★★ -->
-<div id="music-btn" onclick="toggleMusic()">
-    <svg style="width:24px; height:24px; fill:#00d2ff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/></svg>
-</div>
-
 <header class="site-header" id="header">
     <div class="logo" style="font-weight: 800; letter-spacing: 5px;">CHD DESIGN</div>
-    <nav style="display:flex; gap:25px; font-size: 11px; letter-spacing: 2px;">
+    <nav class="nav-list">
         <a href="#about">ABOUT</a>
         <a href="#flow">PROCESS</a>
         <a href="#portfolio">WORKS</a>
+        <a href="#news">PRESS</a>
         <a href="#awards">AWARDS</a>
         <a href="#contact">CONTACT</a>
     </nav>
 </header>
 
-<!-- ★★★ 4. 關於我們 (文字修改標記) ★★★ -->
+<!-- 2. 關於我們 -->
 <section id="about">
-    <h2 class="section-title">About Us</h2>
-    <div style="max-width: 850px; margin: 0 auto; text-align: center; line-height: 2.2; letter-spacing: 1px;">
-        <!-- 【關於我們文字修改處】 -->
+    <div class="section-header">
+        <div class="header-line-main"></div>
+        <div class="header-line-slash"></div>
+        <h2>About Us</h2>
+    </div>
+    <div style="max-width: 800px; margin: 0 auto; text-align: center; line-height: 2.5;">
         <p>我們致力於將「極簡主義」與「空間溫度」完美結合。</p>
-        <p>CHD Design 透過黑、白、灰的純粹語彙，捕捉光影的細微變化，</p>
-        <p>為每一位客戶量身打造回歸本質的高端居住體驗。</p>
+        <p>每一處線條的勾勒，都是為了尋找生活的純粹本質。</p>
     </div>
 </section>
 
-<!-- ★★★ 5. 服務流程 (SVG 圖標) ★★★ -->
+<!-- 3. 服務流程 (補回描述文字) -->
 <section id="flow">
-    <h2 class="section-title">Service Process</h2>
+    <div class="section-header">
+        <div class="header-line-main"></div>
+        <div class="header-line-slash"></div>
+        <h2>Process</h2>
+    </div>
     <div class="flow-grid">
         <div class="flow-item">
-            <svg class="flow-svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
             <h4>初步洽談</h4>
+            <p>了解您的生活形態、風格美學與預算需求。</p>
         </div>
         <div class="flow-item">
-            <svg class="flow-svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
             <h4>平面規劃</h4>
+            <p>精確優化空間動線，提升機能性與採光通風。</p>
         </div>
         <div class="flow-item">
-            <svg class="flow-svg" viewBox="0 0 24 24"><path d="M21 4.5L12 9l-9-4.5V19l9 4.5 9-4.5V4.5zM3 4.5l9 4.5 9-4.5M12 23.5v-10l9-4.5v10l-9 4.5z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <h4>視覺模擬</h4>
+            <p>透過 3D 擬真圖與材質板，預覽未來家的模樣。</p>
         </div>
         <div class="flow-item">
-            <svg class="flow-svg" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.88 9L12 4.57 20.12 9 12 13.43 3.88 9zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line></svg>
             <h4>工程監造</h4>
+            <p>嚴格控管工序細節，確保設計 1:1 完美實踐。</p>
         </div>
     </div>
 </section>
 
-<!-- ★★★ 6. 作品集 ★★★ -->
+<!-- 4. 作品集 -->
 <section id="portfolio">
-    <h2 class="section-title">Selected Works</h2>
+    <div class="section-header">
+        <div class="header-line-main"></div>
+        <div class="header-line-slash"></div>
+        <h2>Selected Works</h2>
+    </div>
     <div class="port-grid">
-        <!-- ★★★ 作品照片路徑 ★★★ -->
-        <div class="port-item"><img src="assets/images/project1.jpg" alt="1"></div>
-        <div class="port-item"><img src="assets/images/project2.jpg" alt="2"></div>
+        <div class="port-item left" onclick="openModal('project1')">
+            <img src="assets/images/project1.jpg" alt="1">
+            <div style="position: absolute; bottom: 30px; left: 30px; color: #fff;"><h3>墨居</h3><p>DETAILS</p></div>
+        </div>
+        <div class="port-item right" onclick="openModal('project2')">
+            <img src="assets/images/project2.jpg" alt="2">
+            <div style="position: absolute; bottom: 30px; left: 30px; color: #fff;"><h3>幾何律動</h3><p>DETAILS</p></div>
+        </div>
     </div>
 </section>
 
-<!-- ★★★ 7. 得獎與聯絡 ★★★ -->
+<!-- 5. 媒體報導 -->
+<section id="news">
+    <div class="section-header">
+        <div class="header-line-main"></div>
+        <div class="header-line-slash"></div>
+        <h2>Press</h2>
+    </div>
+    <div style="max-width: 900px; margin: 0 auto;">
+        <a href="http://cute.edu.tw" target="_blank" style="display:block; padding:25px 0; border-bottom:1px solid #f0f0f0;">📰 2017 THD Award 獲獎報導</a>
+        <div style="padding:25px 0; border-bottom:1px solid #f0f0f0;">📰 漂亮家居專訪：極簡空間的深度對話</div>
+    </div>
+</section>
+
+<!-- 6. 得獎紀錄 -->
 <section id="awards">
-    <h2 class="section-title">Awards</h2>
-    <div style="text-align: center; line-height: 2.5; font-size: 18px;">
+    <div class="section-header">
+        <div class="header-line-main"></div>
+        <div class="header-line-slash"></div>
+        <h2>Awards</h2>
+    </div>
+    <div style="max-width: 900px; margin: 0 auto; text-align: center; line-height: 3;">
         <p>🏆 2024 德國 iF 設計大獎 Winner</p>
         <p>🏆 2023 義大利 A' Design Award Gold</p>
     </div>
 </section>
 
+<!-- 7. 聯絡資訊 -->
 <section id="contact" style="padding-bottom: 200px;">
-    <h2 class="section-title">Contact</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 50px;">
-        <div>
-            <p style="margin-bottom: 15px;">📍 台北市大安區某某路 100 號</p>
-            <p style="margin-bottom: 15px;">📞 02-1234-5678</p>
-            <p>✉️ info@chddesign.com</p>
+    <div class="section-header">
+        <div class="header-line-main"></div>
+        <div class="header-line-slash"></div>
+        <h2>Contact</h2>
+    </div>
+    <div style="text-align: center;">
+        <p style="font-weight: 300; margin-bottom: 30px;">如有設計諮詢需求，請填寫預約表單。</p>
+        <!-- Google 表單連結處 -->
+        <a href="https://google.com" target="_blank" style="display:inline-block; padding:20px 80px; background:#111; color:#fff; letter-spacing:5px;">立即預約諮詢</a>
+        <div style="margin-top: 60px; font-size: 14px; letter-spacing: 2px; opacity: 0.8; line-height: 2.2;">
+            <p>📍 台北市大安區某某路 100 號</p>
+            <p>📞 02-1234-5678 | ✉️ info@chddesign.com</p>
         </div>
-        <form>
-            <input type="text" placeholder="NAME" style="width:100%; padding:15px; margin-bottom:15px; border:1px solid #eee;">
-            <textarea rows="4" placeholder="MESSAGE" style="width:100%; padding:15px; border:1px solid #eee;"></textarea>
-            <button type="button" style="margin-top:15px; padding:15px 40px; background:#000; color:#fff; border:none; letter-spacing:2px; cursor:pointer;">SEND</button>
-        </form>
     </div>
 </section>
+
+<!-- 詳情彈窗 -->
+<div id="project-modal">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <div id="modal-inner" style="max-width: 1000px; margin: 0 auto; color: #fff; text-align: center;"></div>
+</div>
+
+<div id="music-btn" onclick="toggleMusic()">
+    <svg style="width:24px; height:24px; fill:#00d2ff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/></svg>
+</div>
 
 <script>
 // --- 時光隧道粒子 ---
@@ -191,66 +276,48 @@ for (let i = 0; i < 200; i++) {
     container.appendChild(star);
 }
 
-// --- 啟動網站指令 (關鍵修復處) ---
 function startWarp() {
     const stars = document.querySelectorAll('.star');
     const overlay = document.getElementById('overlay');
     const music = document.getElementById('bg-music');
-
-    // 啟動加速線條
-    stars.forEach((star, index) => {
-        setTimeout(() => { star.classList.add('star-animate'); }, index * 1.5);
-    });
-
-    // 啟動縮放特效並開啟音樂
+    stars.forEach((star, index) => { setTimeout(() => { star.classList.add('star-animate'); }, index * 1.5); });
     setTimeout(() => { 
         overlay.classList.add('launching'); 
-        
-        // 嘗試播放音樂
-        const playPromise = music.play();
-        if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                document.getElementById('music-btn').classList.add('rotate');
-            }).catch(error => {
-                console.log("音樂自動播放受阻，等待使用者互動");
-            });
-        }
+        music.play().then(() => document.getElementById('music-btn').classList.add('rotate')).catch(e => console.log("Play blocked"));
     }, 600);
-
-    // 移除遮罩
-    setTimeout(() => { 
-        overlay.style.display = 'none'; 
-    }, 2200);
+    setTimeout(() => { overlay.style.display = 'none'; }, 2200);
 }
 
-// --- 音樂開關 ---
+function openModal(id) {
+    const modal = document.getElementById('project-modal');
+    const inner = document.getElementById('modal-inner');
+    if(id === 'project1') {
+        inner.innerHTML = `<h2>墨居</h2><img class="detail-img" src="assets/images/p1_detail1.jpg">`;
+    } else {
+        inner.innerHTML = `<h2>幾何律動</h2><img class="detail-img" src="assets/images/p2_detail1.jpg">`;
+    }
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() { document.getElementById('project-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+
 function toggleMusic() {
     const music = document.getElementById('bg-music');
     const btn = document.getElementById('music-btn');
-    if (music.paused) {
-        music.play();
-        btn.classList.add('rotate');
-    } else {
-        music.pause();
-        btn.classList.remove('rotate');
-    }
+    music.paused ? (music.play(), btn.classList.add('rotate')) : (music.pause(), btn.classList.remove('rotate'));
 }
 
-// --- 捲動淡入偵測 ---
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('in-view');
-    });
+    entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('in-view'); });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('section').forEach(section => observer.observe(section));
+document.querySelectorAll('section, .port-item').forEach(el => observer.observe(el));
 
-// --- Header 捲動效果 ---
 window.addEventListener('scroll', () => {
     const header = document.getElementById('header');
     window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled');
 });
 </script>
-
 </body>
 </html>
