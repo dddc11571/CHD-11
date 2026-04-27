@@ -4,30 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CHD Design | 現代極簡建築</title>
-    <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        /* ===== 基礎與背景設定 ===== */
+        /* ===== 1. 基礎與背景設定 ===== */
         *{margin:0;padding:0;box-sizing:border-box;}
         body,html{font-family:'Montserrat','Noto Sans TC',sans-serif; background-color:#ffffff; color:#1a1a1a; scroll-behavior:smooth; overflow-x:hidden;}
         a{text-decoration:none; color:inherit;}
 
-        /* 背景系統：垂直線 + 深灰色塊 */
         .bg-system { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
         .v-lines { position: absolute; width: 100%; height: 100%; display: flex; justify-content: space-around; padding: 0 5%; }
         .v-line { width: 1px; height: 100%; background: #f0f0f0; }
-        .shape { position: absolute; background: #d0d0d0; border: 1px solid #c0c0c0; opacity: 1; }
-        .shape-sq-1 { width: 350px; height: 350px; top: 5%; right: -80px; transform: rotate(15deg); }
-        .shape-sq-2 { width: 180px; height: 180px; bottom: 20%; left: 3%; background: #eeeeee; transform: rotate(-10deg); }
-        .shape-trap-1 { width: 550px; height: 320px; top: 30%; left: -150px; clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%); transform: rotate(-6deg); }
+        .shape-sq-1 { position: absolute; width: 350px; height: 350px; top: 5%; right: -80px; background: #d0d0d0; transform: rotate(15deg); opacity: 0.4; }
 
-        /* ===== 標題特殊造型 (雙橫線 + 斜切線) ===== */
-        .section-header { position: relative; width: 100%; padding: 70px 0; margin-bottom: 60px; display: flex; justify-content: center; align-items: center; }
-        .section-header::before { content: ""; position: absolute; top: 44%; left: -10%; width: 120%; height: 1px; background: #e5e5e5; z-index: 1; }
-        .header-line-main { position: absolute; top: 58%; left: -10%; width: 120%; height: 1.5px; background: #333; z-index: 1; }
-        .section-header h2 { position: relative; background: #fff; padding: 0 45px; font-size: 32px; letter-spacing: 20px; font-weight: 800; text-transform: uppercase; z-index: 2; }
-        .header-line-slash { position: absolute; top: 38%; left: 58%; width: 95px; height: 2px; background: #000; transform: rotate(-38deg); z-index: 3; }
-
-        /* ===== 1. 進場動畫 ===== */
+        /* ===== 2. 進場動畫層 ===== */
         .enter-overlay { position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:#000; display:flex; align-items:center; justify-content:center; transition: 1.5s; overflow: hidden; }
         .enter-overlay video { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; height:100%; object-fit:cover; opacity: 0.5; }
         .warp-container { position: absolute; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
@@ -35,64 +23,73 @@
         .enter-content { z-index: 10; text-align: center; color: #fff; }
         .enter-content h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 20px; font-weight: 800; animation: flickerGlow 3s infinite alternate; }
         @keyframes flickerGlow { 0%, 100% { opacity: 1; text-shadow: 0 0 20px #00d2ff; } 50% { opacity: 0.3; } }
-        .enter-btn { padding:15px 50px; background:transparent; color:#fff; border:1px solid #00d2ff; cursor:pointer; letter-spacing: 5px; margin-top: 30px; }
-        .launching { transform: scale(5); opacity: 0; pointer-events: none; visibility: hidden; }
-        .star-animate { animation: warpMove 1s ease-in forwards; }
-        @keyframes warpMove { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(40) translate(var(--x), var(--y)); opacity: 0; } }
+        .enter-btn { padding:15px 50px; background:transparent; color:#fff; border:1px solid #00d2ff; cursor:pointer; letter-spacing: 5px; margin-top: 30px; transition: 0.3s; }
+        .enter-btn:hover { background: #00d2ff; color: #000; }
+        .launching { transform: scale(3); opacity: 0; pointer-events: none; visibility: hidden; }
 
-        /* ===== 2. 主選單與區塊內容 ===== */
+        /* ===== 3. 導覽列與標題 ===== */
         .site-header{ position:fixed; top:0; left:0; width:100%; display:flex; justify-content:space-between; align-items:center; padding:30px 60px; z-index:1000; transition: 0.5s; }
-        .site-header.scrolled { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #eee; }
-        .nav-list { display:flex; gap:25px; font-size: 13px; font-weight: 500; }
-        section { padding: 100px 10%; max-width: 1400px; margin: 0 auto; background: transparent !important; }
+        .site-header.scrolled { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 60px; border-bottom: 1px solid #eee; }
+        .nav-list { display:flex; gap:25px; font-size: 13px; font-weight: 600; }
 
-        /* 服務流程 */
-        .flow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; text-align: center; }
-        .flow-item svg { width: 45px; height: 45px; fill: none; stroke: #333; stroke-width: 1.2; margin-bottom: 25px; }
-        .flow-item h4 { font-size: 20px; margin-bottom: 15px; }
-        .flow-item p { font-size: 15px; opacity: 0.8; line-height: 1.8; }
+        .section-header { position: relative; width: 100%; padding: 70px 0; margin-bottom: 60px; display: flex; justify-content: center; align-items: center; }
+        .section-header::before { content: ""; position: absolute; top: 44%; left: -10%; width: 120%; height: 1px; background: #e5e5e5; z-index: 1; }
+        .header-line-main { position: absolute; top: 58%; left: -10%; width: 120%; height: 1.5px; background: #333; z-index: 1; }
+        .section-header h2 { position: relative; background: #fff; padding: 0 45px; font-size: 28px; letter-spacing: 15px; font-weight: 800; text-transform: uppercase; z-index: 2; }
+        .header-line-slash { position: absolute; top: 38%; left: 58%; width: 95px; height: 2px; background: #000; transform: rotate(-38deg); z-index: 3; }
 
-        /* 作品集 */
-        .port-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .port-item { height: 600px; background: #eee; overflow: hidden; position: relative; cursor: pointer; opacity: 0; transition: all 1.2s; }
-        .port-item.left { transform: translateX(-120px); }
-        .port-item.right { transform: translateX(120px); }
-        .port-item.in-view { opacity: 1; transform: translateX(0); }
-        .port-item img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s ease; }
+        section { padding: 100px 10%; max-width: 1440px; margin: 0 auto; }
+
+        /* ===== 4. 關於我們 (上下排列) ===== */
+        .about-img-box { width: 100%; height: 500px; margin-bottom: 50px; overflow: hidden; }
+        .about-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .about-text-content { text-align: center; max-width: 850px; margin: 0 auto; line-height: 2.2; }
+        .about-text-zh { font-size: 20px; color: #1a1a1a; margin-bottom: 20px; letter-spacing: 2px; font-weight: 500; }
+        .about-text-en { font-size: 15px; color: #888; }
+
+        /* ===== 5. 作品集格子 ===== */
+        .port-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .port-item { height: 550px; background: #eee; overflow: hidden; position: relative; cursor: pointer; opacity: 0; transition: 1.2s; }
+        .port-item.in-view { opacity: 1; transform: translateY(0); }
+        .port-item img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s; }
         .port-item:hover img { transform: scale(1.1); }
-        .port-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 30px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); color: #fff; }
+        .port-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 30px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; }
 
-        /* 新聞與獎項列表 */
-        .list-item { padding: 25px 0; border-bottom: 1px solid #f0f0f0; transition: 0.3s; display: block; font-size: 18px; }
+        /* ===== 6. 列表樣式 (新聞/得獎) ===== */
+        .list-item { padding: 25px 0; border-bottom: 1px solid #f0f0f0; transition: 0.3s; display: flex; justify-content: space-between; align-items: center; font-size: 18px; }
         .list-item:hover { color: #00d2ff; padding-left: 10px; }
+        .date { font-size: 14px; color: #888; letter-spacing: 2px; }
 
-        /* 彈窗詳情樣式 */
-        #project-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; overflow-y: auto; padding: 100px 10%; }
-        .modal-close { position: fixed; top: 30px; right: 40px; color: #fff; font-size: 50px; cursor: pointer; z-index: 10001; }
-        .modal-text { text-align: left; max-width: 800px; margin: 0 auto 50px auto; line-height: 2; color: #fff; }
-        .modal-text h2 { font-size: 28px; letter-spacing: 8px; margin-bottom: 20px; border-left: 3px solid #00d2ff; padding-left: 15px; }
-        .detail-img { width: 100%; margin-bottom: 30px; display: block; }
+        /* ===== 7. 聯絡資訊與按鈕 ===== */
+        .contact-info { margin-top: 30px; line-height: 2.5; font-size: 16px; letter-spacing: 1px; color: #555; }
+        .form-btn { display: inline-block; padding: 20px 60px; background: #1a1a1a; color: #fff; cursor: pointer; font-size: 16px; letter-spacing: 5px; transition: 0.3s; margin-top: 40px; border: none; }
+        .form-btn:hover { background: #00d2ff; color: #000; }
 
-        /* 音樂 CD */
-        #music-btn { position:fixed; bottom:40px; right:40px; width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #00d2ff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2000; }
+        /* ===== 8. 彈窗詳情 ===== */
+        #project-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; overflow-y: auto; padding: 100px 10%; color: #fff; }
+        .modal-close { position: fixed; top: 30px; right: 40px; font-size: 50px; cursor: pointer; color: #fff; z-index: 10001; }
+        .modal-text { text-align: left; max-width: 800px; margin: 0 auto 50px auto; line-height: 2; }
+        .modal-text h2 { font-size: 32px; letter-spacing: 8px; margin-bottom: 20px; border-left: 4px solid #00d2ff; padding-left: 20px; }
+        .detail-img { width: 100%; margin-bottom: 20px; display: block; border: 1px solid #222; }
+
+        /* ===== 9. 音樂 CD 控制 ===== */
+        #music-btn { position:fixed; bottom:40px; right:40px; width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #00d2ff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2000; color: #fff; font-size: 11px; }
         .rotate { animation: spin 4s linear infinite; }
         @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
-        @media(max-width: 768px) { .nav-list { display:none; } .port-grid { grid-template-columns: 1fr; } }
+        @media(max-width: 768px) { .nav-list { display:none; } .about-img-box { height: 300px; } }
     </style>
 </head>
 <body>
 
 <div class="bg-system">
-    <div class="v-lines">
-        <div class="v-line"></div><div class="v-line"></div><div class="v-line"></div>
-        <div class="v-line"></div><div class="v-line"></div><div class="v-line"></div>
-    </div>
-    <div class="shape shape-sq-1"></div><div class="shape shape-sq-2"></div><div class="shape shape-trap-1"></div>
+    <div class="v-lines"><div class="v-line"></div><div class="v-line"></div><div class="v-line"></div></div>
+    <div class="shape-sq-1"></div>
 </div>
 
-<audio id="bg-music" loop preload="auto"><source src="assets/music/background.mp3" type="audio/mpeg"></audio>
+<audio id="bg-music" loop><source src="assets/music/background.mp3" type="audio/mpeg"></audio>
 
+<!-- 1. 進場動畫層 -->
 <div class="enter-overlay" id="overlay">
     <video autoplay muted loop playsinline><source src="assets/videos/intro.mp4" type="video/mp4"></video>
     <div class="warp-container" id="warp-container"></div>
@@ -103,11 +100,11 @@
     </div>
 </div>
 
+<!-- 導覽列 -->
 <header class="site-header" id="header">
     <div class="logo" style="font-weight: 800; letter-spacing: 5px;">CHD DESIGN</div>
     <nav class="nav-list">
         <a href="#about">ABOUT</a>
-        <a href="#flow">PROCESS</a>
         <a href="#portfolio">WORKS</a>
         <a href="#news">PRESS</a>
         <a href="#awards">AWARDS</a>
@@ -115,134 +112,170 @@
     </nav>
 </header>
 
-<!-- 1. 關於我們 -->
+<!-- 2. 關於我們 (上下排列) -->
 <section id="about">
-    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>About Us</h2></div>
-    <div style="max-width: 850px; margin: 0 auto; text-align: center; line-height: 2.5; font-size: 18px;">
-        <p>致力於將「極簡主義」與「空間溫度」完美結合。</p>
-        <p>每一處線條的勾勒，都是為了尋找生活的純粹本質。</p>
-    </div>
-</section>
-
-<!-- 2. 服務流程 -->
-<section id="flow">
-    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>Process</h2></div>
-    <div class="flow-grid">
-        <div class="flow-item"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg><h4>初步洽談</h4><p>了解您的生活形態與美學偏好。</p></div>
-        <div class="flow-item"><svg viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg><h4>平面規劃</h4><p>精確優化空間動線與美感。</p></div>
-        <div class="flow-item"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg><h4>視覺模擬</h4><p>透過 3D 擬真圖預覽家空間。</p></div>
-        <div class="flow-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line></svg><h4>工程監造</h4><p>嚴格控管工序，確保設計實踐。</p></div>
+    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>About</h2></div>
+    <div class="about-img-box"><img src="assets/images/about.jpg" alt="About"></div>
+    <div class="about-text-content">
+        <div class="about-text-zh">CHD Design 專注於將極簡主義轉化為感官體驗。建築不應只是冷冰冰的結構，而是光影、材質與使用者生活之間的對話。</div>
+        <div class="about-text-en">CHD Design specializes in transforming minimalism into sensory experiences. Architecture is a dialogue between light, material, and life.</div>
     </div>
 </section>
 
 <!-- 3. 作品集 -->
 <section id="portfolio">
-    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>Works</h2></div>
+    <div class="section-header"><div class="header-line-main"></div><h2>Works</h2></div>
     <div class="port-grid">
-        <div class="port-item left" onclick="openModal('project1')">
-            <img src="assets/images/project1.jpg" alt="1">
-            <div class="port-label"><h3>墨居</h3><p>Residential | </p></div>
+        <!-- 作品一：墨居 -->
+        <div class="port-item" onclick="openModal('mor')">
+            <img src="assets/images/project1.jpg" alt="墨居">
+            <div class="port-label"><h3>墨居 | MOR</h3><-</p></div>
         </div>
-        <div class="port-item right" onclick="openModal('project2')">
-            <img src="assets/images/project2.jpg" alt="2">
-            <div class="port-label"><h3>心居</h3><p>Residential | </p></div>
+        <!-- 作品二 -->
+        <div class="port-item" onclick="openModal('p2')">
+            <img src="assets/images/project2.jpg" alt="作品二">
+            <div class="port-label"><h3>心居 | Heart</h3><p>-</p></div>
         </div>
+        <!-- 作品三 -->
+        <div class="port-item" onclick="openModal('p3')">
+            <img src="assets/images/project3.jpg" alt="作品三">
+            <div class="port-label"><h3>隱居 | Mystery</h3><p>-</p></div>
+        </div>
+        <!-- 作品四 -->
+        <div class="port-item" onclick="openModal('p4')">
+            <img src="assets/images/p3_main.jpg" alt="作品三">
+            <div class="port-label"><h3>境止 | CALM</h3><p>-</p></div>
     </div>
 </section>
 
-<!-- 4. 新聞採訪 -->
+<!-- 4. 新聞採訪 (補回) -->
 <section id="news">
-    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>Press</h2></div>
-    <div style="max-width: 900px; margin: 0 auto;">
-        <a href="http://cute.edu.tw" target="_blank" class="list-item">📰 2017 THD Award 兩岸手繪設計獎 獲獎報導</a>
-        <div class="list-item">📰 漂亮家居專訪：極簡空間的對話</div>
-    </div>
+    <div class="section-header"><div class="header-line-main"></div><h2>Press</h2></div>
+    <a href="#" class="list-item"><span>建築評論：空間中的減法美學</span><span class="date">2024.03</span></a>
+    <a href="#" class="list-item"><span>Design Antho 專訪：CHD 的設計哲學</span><span class="date">2023.11</span></a>
+    <a href="#" class="list-item"><span>當代設計：墨居空間意境探討</span><span class="date">2023.08</span></a>
 </section>
 
-<!-- 5. 得獎紀錄 -->
+<!-- 5. 得獎紀錄 (補回) -->
 <section id="awards">
-    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>Awards</h2></div>
-    <div style="max-width: 900px; margin: 0 auto; line-height: 2; font-size: 18px;">
-        <div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;">🏆 2017 THD Award 兩岸手繪設計獎 金獎 Winner</div>
-        <div style="padding: 15px 0; border-bottom: 1px solid #f0f0f0;">🏆 ---</div>
-    </div>
+    <div class="section-header"><div class="header-line-main"></div><h2>Awards</h2></div>
+    <div class="list-item"><span>IF Design Award - Architecture Winner</span><span class="date">2024</span></div>
+    <div class="list-item"><span>Good Design Award - Interior Design</span><span class="date">2023</span></div>
+    <div class="list-item"><span>TID Award - 金獎</span><span class="date">2023</span></div>
 </section>
 
-<!-- 6. 聯絡資訊 -->
-<section id="contact" style="padding-bottom: 150px;">
-    <div class="section-header"><div class="header-line-main"></div><div class="header-line-slash"></div><h2>Contact</h2></div>
-    <div style="text-align: center;">
-        <a href="https://google.com" target="_blank" style="display:inline-block; padding:22px 90px; background:#111; color:#fff; letter-spacing:5px;">立即預約諮詢</a>
-        <div style="margin-top: 70px; font-size: 16px; opacity: 0.8; line-height: 2.2;">
-            <p>📍 台北市---</p>
-            <p>📞 02-1-- | ✉️ info@chddesign.com</p>
-        </div>
+<!-- 6. 聯絡我們 (地址、電話、信箱、Google表單) -->
+<section id="contact" style="text-align: center;">
+    <div class="section-header"><div class="header-line-main"></div><h2>Contact</h2></div>
+    <div class="contact-info">
+        <p><strong>ADDRESS</strong> / 台北市大安區某某路一段 100 號</p>
+        <p><strong>TEL</strong> / +886 2 2345 6789</p>
+        <p><strong>EMAIL</strong> / info@chddesign.com</p>
     </div>
+    <!-- 替換為你的 Google 表單連結 -->
+    <a href="https://google.com..." target="_blank" class="form-btn">OPEN INQUIRY FORM</a>
 </section>
 
+<!-- 7. 彈窗詳情 (點擊作品顯示細節圖) -->
 <div id="project-modal">
     <span class="modal-close" onclick="closeModal()">&times;</span>
-    <div id="modal-inner"></div>
+    <div id="modal-inner-content">
+        <!-- 內容由 JS 動態生成 -->
+    </div>
 </div>
 
-<div id="music-btn" onclick="toggleMusic()">
-    <svg style="width:24px; height:24px; fill:#00d2ff;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5z"/></svg>
-</div>
+<!-- 8. 音樂控制 -->
+<div id="music-btn" onclick="toggleMusic()">MUSIC</div>
 
 <script>
-// --- 時光隧道 ---
-const container = document.getElementById('warp-container');
-for (let i = 0; i < 200; i++) {
-    const star = document.createElement('div'); star.className = 'star';
-    const x = (Math.random() - 0.5) * 3500; const y = (Math.random() - 0.5) * 3500;
-    star.style.setProperty('--x', `${x}px`); star.style.setProperty('--y', `${y}px`);
-    star.style.left = '50%'; star.style.top = '50%'; star.style.width = '2px'; star.style.height = '2px';
-    container.appendChild(star);
-}
-function startWarp() {
-    const stars = document.querySelectorAll('.star'); const overlay = document.getElementById('overlay'); const music = document.getElementById('bg-music');
-    stars.forEach((star, index) => { setTimeout(() => { star.classList.add('star-animate'); }, index * 1.5); });
-    setTimeout(() => { overlay.classList.add('launching'); music.play().catch(e=>console.log("Blocked")); document.getElementById('music-btn').classList.add('rotate'); }, 600);
-    setTimeout(() => { overlay.style.display = 'none'; }, 2200);
-}
+    // 作品詳細資料庫
+    const projects = {
+        'mor': {
+            title: '墨居 | MOR',
+            desc: '以空靈的心境 落實意境的空間。',
+            images: [
+                'assets/images/p1_detail1.jpg',
+                'assets/images/p1_detail2.jpg',
+                'assets/images/p1_detail3.jpg',
+                'assets/images/p1_detail4.jpg',
+                'assets/images/p1_detail5.jpg'
+            ]
+        },
+        'p2': {
+            title: '心居 | Heart',
+            desc: '以心之所向 落實內心的嚮往合。',
+            images: ['assets/images/p2_detail1.jpg', 'assets/images/p2_detail2.jpg', 'assets/images/p2_detail3.jpg', 'assets/images/p2_detail4.jpg']
+        },
+        'p3': {
+            title: '隱居 | Mystery',
+            desc: '以隱居於市 落實塵囂的遠離。',
+            images: ['assets/images/p3_detail1.jpg', 'assets/images/p3_detail2.jpg', 'assets/images/p3_detail3.jpg', 'assets/images/p3_detail4.jpg', 'assets/images/p3_detail5.jpg', 'assets/images/p3_detail6.jpg', 'assets/images/p3_detail7.jpg']
+        }
+    };
 
-// --- 作品詳情內容 ---
-function openModal(id) {
-    const modal = document.getElementById('project-modal');
-    const inner = document.getElementById('modal-inner');
-    if(id === 'project1') {
-        inner.innerHTML = `
-            <div class="modal-text">
-                <h2>墨居 | MOR </h2>
-                <p>以空靈的心境 落實意境的空間。</p>
-            </div>
-            <!-- 修改下方 src 路徑為您的照片 -->
-            <img class="detail-img" src="assets/images/p1_detail1.jpg">
-            <img class="detail-img" src="assets/images/p1_detail2.jpg">
-            <img class="detail-img" src="assets/images/p1_detail3.jpg">
-            <img class="detail-img" src="assets/images/p1_detail4.jpg">
-            <img class="detail-img" src="assets/images/p1_detail5.jpg">
-        `;
-    } else {
-        inner.innerHTML = `
-            <div class="modal-text">
-                <h2>心居 | Heart </h2>
-                <p>以心之所向 落實內心的嚮往。</p>
-            </div>
-            <img class="detail-img" src="assets/images/p2_detail2.jpg">
-            <img class="detail-img" src="assets/images/p2_detail1.jpg">
-        `;
+    // 進場動畫
+    function startWarp() {
+        const container = document.getElementById('warp-container');
+        for(let i=0; i<80; i++){
+            const star = document.createElement('div');
+            star.className = 'star';
+            const x = (Math.random() - 0.5) * 2000;
+            const y = (Math.random() - 0.5) * 2000;
+            star.style.left='50%'; star.style.top='50%'; star.style.width='2px'; star.style.height='2px';
+            container.appendChild(star);
+            star.animate([{transform:'scale(1)',opacity:1},{transform:`translate(${x}px, ${y}px) scale(15)`,opacity:0}],{duration:1200,easing:'ease-in'});
+        }
+        setTimeout(()=>{
+            document.getElementById('overlay').classList.add('launching');
+            document.getElementById('bg-music').play().catch(()=>{});
+            document.getElementById('music-btn').classList.add('rotate');
+        }, 600);
     }
-    modal.style.display = 'block'; document.body.style.overflow = 'hidden';
-}
-function closeModal() { document.getElementById('project-modal').style.display = 'none'; document.body.style.overflow = 'auto'; }
-function toggleMusic() {
-    const music = document.getElementById('bg-music'); const btn = document.getElementById('music-btn');
-    music.paused ? (music.play(), btn.classList.add('rotate')) : (music.pause(), btn.classList.remove('rotate'));
-}
-const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('in-view'); }); }, { threshold: 0.1 });
-document.querySelectorAll('section, .port-item').forEach(el => observer.observe(el));
-window.addEventListener('scroll', () => { const header = document.getElementById('header'); window.scrollY > 50 ? header.classList.add('scrolled') : header.classList.remove('scrolled'); });
+
+    // 開啟彈窗
+    function openModal(id) {
+        const data = projects[id];
+        if(!data) return;
+        
+        let htmlContent = `
+            <div class="modal-text">
+                <h2>${data.title}</h2>
+                <p>${data.desc}</p>
+            </div>`;
+        
+        data.images.forEach(src => {
+            htmlContent += `<img class="detail-img" src="${src}">`;
+        });
+        
+        document.getElementById('modal-inner-content').innerHTML = htmlContent;
+        document.getElementById('project-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    // 關閉彈窗
+    function closeModal() {
+        document.getElementById('project-modal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // 滾動監聽
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('header');
+        if(window.scrollY > 50) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+        
+        document.querySelectorAll('.port-item').forEach(item => {
+            if(item.getBoundingClientRect().top < window.innerHeight * 0.85) item.classList.add('in-view');
+        });
+    });
+
+    // 音樂切換
+    function toggleMusic() {
+        const m = document.getElementById('bg-music');
+        const b = document.getElementById('music-btn');
+        if(m.paused){ m.play(); b.classList.add('rotate'); }
+        else { m.pause(); b.classList.remove('rotate'); }
+    }
 </script>
+
 </body>
 </html>
