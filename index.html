@@ -18,11 +18,26 @@
         .enter-overlay { position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:#000; display:flex; align-items:center; justify-content:center; transition: 1.5s; overflow: hidden; }
         .enter-overlay video { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; height:100%; object-fit:cover; opacity: 0.5; }
         .warp-container { position: absolute; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
-        .star { position: absolute; background: #fff; border-radius: 50%; opacity: 0; }
         .enter-content { z-index: 10; text-align: center; color: #fff; }
-        .enter-content h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); letter-spacing: 20px; font-weight: 800; animation: flickerGlow 3s infinite alternate; }
-        @keyframes flickerGlow { 0%, 100% { opacity: 1; text-shadow: 0 0 20px #00d2ff; } 50% { opacity: 0.3; } }
-        .enter-btn { padding:15px 50px; background:transparent; color:#fff; border:1px solid #00d2ff; cursor:pointer; letter-spacing: 5px; margin-top: 30px; transition: 0.3s; }
+        .enter-content h1 { 
+            font-size: clamp(2.5rem, 10vw, 6rem); font-weight: 900; letter-spacing: 15px; 
+            color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8); 
+            position: relative; display: inline-block; animation: flickerGlowStroke 3s infinite alternate; margin-bottom: 15px;
+        }
+        .enter-content h1::after {
+            content: ""; position: absolute; top: 55%; left: -5%; width: 110%; height: 1px;
+            background: #00d2ff; box-shadow: 0 0 15px #00d2ff; animation: linePulse 3s infinite alternate;
+        }
+        .enter-content p {
+            letter-spacing: 10px; color: #00d2ff; font-size: 14px; font-weight: 500; text-transform: uppercase;
+            animation: flickerGlowSubtitle 3s infinite alternate;
+        }
+
+        @keyframes flickerGlowStroke { 0%, 100% { opacity: 1; filter: drop-shadow(0 0 20px #00d2ff); } 50% { opacity: 0.3; filter: drop-shadow(0 0 5px #00d2ff); } }
+        @keyframes flickerGlowSubtitle { 0%, 100% { opacity: 1; text-shadow: 0 0 15px #00d2ff; } 50% { opacity: 0.3; text-shadow: 0 0 5px #00d2ff; } }
+        @keyframes linePulse { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(0.95); opacity: 0.3; } }
+
+        .enter-btn { padding:15px 50px; background:transparent; color:#fff; border:1px solid #00d2ff; cursor:pointer; letter-spacing: 5px; margin-top: 40px; transition: 0.3s; position: relative; z-index: 20; }
         .enter-btn:hover { background: #00d2ff; color: #000; }
         .launching { transform: scale(3); opacity: 0; pointer-events: none; visibility: hidden; }
 
@@ -39,17 +54,19 @@
         section { padding: 100px 0; width: 100%; margin: 0 auto; }
         .content-wrap { padding: 0 10%; max-width: 1440px; margin: 0 auto; }
 
-        /* ===== 4. 服務流程 (加上英文) ===== */
-        .flow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px 30px; text-align: center; }
+        /* ===== 4. 服務流程 ===== */
+        .flow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px 30px; text-align: center; }
         .flow-item svg { width: 35px; height: 35px; fill: none; stroke: #333; stroke-width: 1.2; margin-bottom: 20px; }
         .flow-item h4 { font-size: 18px; margin-bottom: 10px; letter-spacing: 2px; }
         .flow-item p { font-size: 13px; opacity: 0.6; line-height: 1.8; }
-        .flow-en { font-family: 'Montserrat'; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; color: #00d2ff; }
+        .flow-en { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; color: #00d2ff; }
 
-        /* ===== 5. 關於我們 (滿版) ===== */
+        /* ===== 5. 關於我們 (滿版照片) ===== */
         .about-img-box { width: 100%; height: 80vh; margin-bottom: 60px; overflow: hidden; }
         .about-img-box img { width: 100%; height: 100%; object-fit: cover; }
         .about-text-content { text-align: center; max-width: 850px; margin: 0 auto; line-height: 2.2; padding: 0 20px; }
+        .about-zh { font-size: 20px; letter-spacing: 2px; margin-bottom: 10px; color: #1a1a1a; font-weight: 500; }
+        .about-en { font-size: 15px; color: #888; letter-spacing: 1px; }
 
         /* ===== 6. 作品集 (二個一行，滿版切齊) ===== */
         .port-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px; width: 100%; }
@@ -59,10 +76,9 @@
         .port-item:hover img { transform: scale(1.05); }
         .port-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 30px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); color: #fff; }
 
-        /* ===== 7. 聯絡與列表樣式 ===== */
+        /* ===== 7. 聯絡資訊與列表 ===== */
         .list-item { padding: 25px 0; border-bottom: 1px solid #f0f0f0; transition: 0.3s; display: flex; justify-content: space-between; align-items: center; font-size: 18px; text-decoration: none; color: inherit; }
         .list-item:hover { color: #00d2ff; padding-left: 10px; }
-        .date { font-size: 14px; color: #888; }
         .contact-info { margin-top: 30px; line-height: 2.5; font-size: 16px; color: #555; text-align: center; }
         .form-btn { display: inline-block; padding: 20px 60px; background: #1a1a1a; color: #fff; cursor: pointer; font-size: 16px; letter-spacing: 5px; transition: 0.3s; margin-top: 40px; text-decoration: none; border: none; }
         .form-btn:hover { background: #00d2ff; color: #000; }
@@ -72,17 +88,13 @@
         .modal-close { position: fixed; top: 30px; right: 40px; font-size: 50px; cursor: pointer; color: #fff; z-index: 10001; }
         .modal-text { text-align: left; max-width: 800px; margin: 0 auto 50px auto; line-height: 2; }
         .modal-text h2 { font-size: 32px; border-left: 4px solid #00d2ff; padding-left: 20px; margin-bottom: 20px; }
-        .detail-img { width: 100%; margin-bottom: 20px; display: block; }
+        .detail-img { width: 100%; margin-bottom: 20px; display: block; border: 1px solid #222; }
 
         #music-btn { position:fixed; bottom:40px; right:40px; width:60px; height:60px; border-radius:50%; background:#111; border:2px solid #00d2ff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2000; color: #fff; }
         .rotate { animation: spin 4s linear infinite; }
         @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
-        @media(max-width: 768px) { 
-            .nav-list { display:none; } 
-            .port-grid { grid-template-columns: 1fr; }
-            .port-item, .about-img-box { height: 50vh; }
-        }
+        @media(max-width: 768px) { .nav-list { display:none; } .port-grid { grid-template-columns: 1fr; } .port-item, .about-img-box { height: 50vh; } }
     </style>
 </head>
 <body>
@@ -99,7 +111,7 @@
     <div class="warp-container" id="warp-container"></div>
     <div class="enter-content">
         <h1>CHD DESIGN</h1>
-        <p style="letter-spacing: 8px; margin-bottom: 30px; color: #00d2ff;">AUTHENTIC ARCHITECTURE</p>
+        <p>AUTHENTIC ARCHITECTURE</p>
         <button class="enter-btn" onclick="startWarp()">ENTER SYSTEM</button>
     </div>
 </div>
@@ -118,107 +130,98 @@
 
 <!-- 2. 關於我們 -->
 <section id="about">
-    <div class="content-wrap">
-        <div class="section-header"><div class="header-line-main"></div><h2>About</h2></div>
-    </div>
+    <div class="content-wrap"><div class="section-header"><div class="header-line-main"></div><h2>About</h2></div></div>
     <div class="about-img-box"><img src="assets/images/about.jpg" alt="About"></div>
     <div class="about-text-content">
-        <p style="font-size: 20px; letter-spacing: 2px; margin-bottom: 20px;">CHD Design 專注於極簡美學。建築應是光影與材質的對話。</p>
-        <p style="font-size: 15px; color: #888;">Architecture is a dialogue between light, material and life.</p>
+        <p class="about-zh">CHD Design 專注於極簡美學。建築應是光影與材質的對話。</p>
+        <p class="about-en">CHD Design specializes in minimalist aesthetics. Architecture should be a dialogue between light, material, and life.</p>
     </div>
 </section>
 
-<!-- 3. 服務流程 (補上英文敘述) -->
+<!-- 3. 服務流程 -->
 <section id="process">
-    <div class="content-wrap">
-        <div class="section-header"><div class="header-line-main"></div><h2>Process</h2></div>
+    <div class="content-wrap"><div class="section-header"><div class="header-line-main"></div><h2>Process</h2></div>
         <div class="flow-grid">
             <div class="flow-item">
                 <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-12.7c.9 0 1.8.2 2.6.5"/><path d="M12 12V4M12 12l4 4"/></svg>
-                <span class="flow-en">Consultation</span>
-                <h4>洽談</h4>
-                <p>需求分析與初步諮詢<br>Client needs & project briefing</p>
+                <span class="flow-en">Consultation</span><h4>洽談</h4><p>需求分析與諮詢</p>
             </div>
             <div class="flow-item">
                 <svg viewBox="0 0 24 24"><path d="M3 13h18M3 7h18M3 19h18"/></svg>
-                <span class="flow-en">Site Survey</span>
-                <h4>現場丈量</h4>
-                <p>空間實測與基地記錄<br>Dimension measurement & analysis</p>
+                <span class="flow-en">Survey</span><h4>現場丈量</h4><p>空間實測記錄</p>
             </div>
             <div class="flow-item">
                 <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L12 17.77l-6.18 3.25L7 14.14 12 2z"/></svg>
-                <span class="flow-en">Concept Design</span>
-                <h4>提案設計</h4>
-                <p>平面配置與視覺提案<br>Space planning & conceptual design</p>
+                <span class="flow-en">Design</span><h4>提案設計</h4><p>概念與平面配置</p>
             </div>
             <div class="flow-item">
                 <svg viewBox="0 0 24 24"><path d="M20 7h-9L9 5H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2z"/></svg>
-                <span class="flow-en">Construction</span>
-                <h4>施工階段</h4>
-                <p>工程監督與品質控管<br>Project supervision & implementation</p>
+                <span class="flow-en">Construction</span><h4>施工階段</h4><p>品質控管監督</p>
             </div>
             <div class="flow-item">
                 <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-                <span class="flow-en">Inspection</span>
-                <h4>驗收</h4>
-                <p>細節查核與品質驗證<br>Final inspection & quality check</p>
+                <span class="flow-en">Inspection</span><h4>驗收</h4><p>細節檢查確認</p>
             </div>
             <div class="flow-item">
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span class="flow-en">Handover</span>
-                <h4>交屋</h4>
-                <p>空間交付與保固啟動<br>Completion & post-service warranty</p>
+                <span class="flow-en">Handover</span><h4>交屋</h4><p>空間交付保固</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 4. 作品集 (二欄滿版) -->
+<!-- 4. 作品集 -->
 <section id="portfolio">
-    <div class="content-wrap">
-        <div class="section-header"><div class="header-line-main"></div><h2>Works</h2></div>
-    </div>
+    <div class="content-wrap"><div class="section-header"><div class="header-line-main"></div><h2>Works</h2></div></div>
     <div class="port-grid">
         <div class="port-item" onclick="openModal('mor')">
-            <img src="assets/images/project1.jpg" alt="墨居">
-            <div class="port-label"><h3>墨居 | MOR</h3><p></p></div>
+            <img src="assets/images/project1.jpg" alt="墨居"><div class="port-label"><h3>墨居 | MOR</h3><p></p></div>
         </div>
         <div class="port-item" onclick="openModal('p2')">
-            <img src="assets/images/project2.jpg" alt="心居">
-            <div class="port-label"><h3>心居 | Heart</h3><p></p></div>
+            <img src="assets/images/project2.jpg" alt="心居"><div class="port-label"><h3>心居 | Heart</h3><p></p></div>
         </div>
         <div class="port-item" onclick="openModal('p3')">
-            <img src="assets/images/project3.jpg" alt="隱居">
-            <div class="port-label"><h3>隱居 |Mystery</h3><p></p></div>
+            <img src="assets/images/project3.jpg" alt="隱居"><div class="port-label"><h3>隱居 | Mystery</h3><p></p></div>
         </div>
+        <div class="port-item" onclick="openModal('p4')">
+            <img src="assets/images/project4.jpg" alt="浮現"><div class="port-label"><h3>浮現 | Emerge</h3><p></p></div>
+        </div>
+
+        <!-- ★ 未來在此處新增作品五 ★ -->
+        <!-- 
+        <div class="port-item" onclick="openModal('p5')">
+            <img src="assets/images/p5_main.jpg" alt="作品五">
+            <div class="port-label"><h3>作品名稱 | TITLE</h3><p>Location, Year</p></div>
+        </div> 
+        -->
+
     </div>
 </section>
 
-<!-- 5. 新聞與獎項 -->
+<!-- 5. 新聞採訪 -->
 <section id="news"><div class="content-wrap">
     <div class="section-header"><div class="header-line-main"></div><h2>Press</h2></div>
     <a href="http://cute.edu.tw" target="_blank" class="list-item">
-        <span>2017年 兩岸手繪設計獎 金獎</span><span class="date">2017.08</span>
+        <span>2017年 兩岸手繪設計獎 金獎</span><span style="color:#888; font-size:14px;">2017.08</span>
     </a>
 </div></section>
 
+<!-- 6. 得獎紀錄 -->
 <section id="awards"><div class="content-wrap">
     <div class="section-header"><div class="header-line-main"></div><h2>Awards</h2></div>
-    <div class="list-item"><span>IF Design Award - Winner</span><span class="date">2024</span></div>
+    <div class="list-item"><span>017年 兩岸手繪設計獎 金獎</span><span class="date">2024</span></div>
+    <div class="list-item"><span>Good Design Award (努力中~)</span><span class="date">2023</span></div>
 </div></section>
 
-<!-- 6. 聯絡我們 -->
+<!-- 7. 聯絡資訊 -->
 <section id="contact">
-    <div class="content-wrap">
-        <div class="section-header"><div class="header-line-main"></div><h2>Contact</h2></div>
+    <div class="content-wrap"><div class="section-header"><div class="header-line-main"></div><h2>Contact</h2></div>
         <div class="contact-info">
-            <p><strong>ADDRESS</strong> / 新北市新莊區中原里 (工作室)</p>
-            <p><strong>TEL</strong> / +886 2 2345 6789</p>
+            <p><strong>ADDRESS</strong> / 新北市新莊區中原里 (CHD工作室)</p>
+            <p><strong>TEL</strong> / +886 ---</p>
             <p><strong>EMAIL</strong> / info@chddesign.com</p>
         </div>
-        <div style="text-align: center;">
-            <a href="你的表單連結" target="_blank" class="form-btn">OPEN INQUIRY FORM</a>
-        </div>
+        <div style="text-align: center;"><a href="您的表單連結" target="_blank" class="form-btn">OPEN INQUIRY FORM</a></div>
     </div>
 </section>
 
@@ -226,40 +229,27 @@
 <div id="music-btn" onclick="toggleMusic()">MUSIC</div>
 
 <script>
+    // 作品庫資料庫
     const projects = {
-        'mor': {
-            title: '墨居 | MOR',
-            desc: '以空靈的心境 落實意境的空間。',
-            images: ['assets/images/p1_detail1.jpg','assets/images/p1_detail2.jpg','assets/images/p1_detail3.jpg','assets/images/p1_detail4.jpg','assets/images/p1_detail5.jpg']
-        },
-        'p2': { 
-            title: '心居 | FLOW', 
-            desc: '以心之所向 落實內心的嚮往。', 
-            images: ['assets/images/p2_detail1.jpg', 'assets/images/p2_detail2.jpg', 'assets/images/p2_detail3.jpg', 'assets/images/p2_detail4.jpg']
-        },
-        'p3': { 
-            title: '隱居 | Mystery', 
-            desc: '以隱居於市 落實塵囂的遠離。', 
-            images: ['assets/images/p3_detail1.jpg', 'assets/images/p3_detail2.jpg', 'assets/images/p3_detail3.jpg', 'assets/images/p3_detail4.jpg', 'assets/images/p3_detail5.jpg', 'assets/images/p3_detail6.jpg', 'assets/images/p3_detail7.jpg']
+        'mor': { title: '墨居 | MOR', desc: '以空靈的心境 落實意境的空間。', images: ['assets/images/p1_detail1.jpg','assets/images/p1_detail2.jpg','assets/images/p1_detail3.jpg','assets/images/p1_detail4.jpg','assets/images/p1_detail5.jpg'] },
+        'p2': { title: '心居 | Heart', desc: '以心之所向 落實內心的嚮往。', images: ['assets/images/p2_detail1.jpg', 'assets/images/p2_detail2.jpg', 'assets/images/p2_detail3.jpg', 'assets/images/p2_detail4.jpg'] },
+        'p3': { title: '隱居 | Mystery', desc: '以隱居於市 落實塵囂的遠。', images: ['assets/images/p3_detail1.jpg', 'assets/images/p3_detail2.jpg', 'assets/images/p3_detail3.jpg', 'assets/images/p3_detail4.jpg', 'assets/images/p3_detail5.jpg', 'assets/images/p3_detail6.jpg', 'assets/images/p3_detail7.jpg'] },
+        'p4': { title: '浮現 | Emerge', desc: '光影與建築輪廓。', images: ['assets/images/p4_detail1.jpg', 'assets/images/p4_detail2.jpg', 'assets/images/p4_detail3.jpg', 'assets/images/p4_detail4.jpg', 'assets/images/p4_detail5.jpg', 'assets/images/p4_detail6.jpg', 'assets/images/p4_detail7.jpg', 'assets/images/p4_detail8.jpg'] },
+
+        // ★ 未來在此處新增作品五的細節 (注意前面的逗號) ★
+        /*
+        'p5': { 
+            title: '作品五名稱', 
+            desc: '設計理念描述', 
+            images: ['assets/images/p5_detail1.jpg', 'assets/images/p5_detail2.jpg'] 
         }
+        */
     };
 
     function startWarp() {
-        const container = document.getElementById('warp-container');
-        for(let i=0; i<80; i++){
-            const star = document.createElement('div');
-            star.className = 'star';
-            const x = (Math.random() - 0.5) * 2000;
-            const y = (Math.random() - 0.5) * 2000;
-            star.style.left='50%'; star.style.top='50%'; star.style.width='2px';
-            container.appendChild(star);
-            star.animate([{transform:'scale(1)',opacity:1},{transform:`translate(${x}px, ${y}px) scale(15)`,opacity:0}],{duration:1200,easing:'ease-in'});
-        }
-        setTimeout(()=>{
-            document.getElementById('overlay').classList.add('launching');
-            document.getElementById('bg-music').play().catch(()=>{});
-            document.getElementById('music-btn').classList.add('rotate');
-        }, 600);
+        document.getElementById('overlay').classList.add('launching');
+        document.getElementById('bg-music').play().catch(()=>{});
+        document.getElementById('music-btn').classList.add('rotate');
     }
 
     function openModal(id) {
@@ -284,11 +274,9 @@
 
     function toggleMusic() {
         const m = document.getElementById('bg-music');
-        const b = document.getElementById('music-btn');
-        if(m.paused){ m.play(); b.classList.add('rotate'); }
-        else { m.pause(); b.classList.remove('rotate'); }
+        if(m.paused){ m.play(); document.getElementById('music-btn').classList.add('rotate'); }
+        else { m.pause(); document.getElementById('music-btn').classList.remove('rotate'); }
     }
 </script>
-
 </body>
 </html>
